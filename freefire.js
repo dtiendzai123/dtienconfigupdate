@@ -851,3 +851,80 @@ if (url.includes("customConfig")) {
 } else {
   $done({});
 }
+// ==UserScript==
+// @name           Free Fire AimLock Engine
+// @description    Aim lock + Flick shot + Recoil for Free Fire
+// @version        1.0
+// ==/UserScript==
+
+const config = {
+  auto_fov: { dynamic_adjust: true, max: 6.4 },
+  math: { predictive_offset: 0.18 },
+  headlock: {
+    enabled: true,
+    biasFactor: 1.7,
+    lockHeightRatio: 0.965
+  },
+  weapon_profiles: {
+    default: { tracking_speed: 1.12 },
+    m1887: { tracking_speed: 15.8, flick_speed: 1.5 }
+  },
+  recoil: {
+    m1887: { x: 0.22, y: 0.88 }
+  }
+};
+
+function calculateHeadLockOffset(enemy, weaponType = "default") {
+  const profile = config.weapon_profiles[weaponType] || config.weapon_profiles.default;
+  const offset = config.math.predictive_offset;
+  const lockBias = config.headlock.biasFactor;
+
+  return {
+    x: enemy.velocity.x * offset * profile.tracking_speed * lockBias,
+    y: enemy.velocity.y * offset * profile.tracking_speed * lockBias,
+    z: enemy.velocity.z * offset * profile.tracking_speed * lockBias + (enemy.height * config.headlock.lockHeightRatio)
+  };
+}
+
+function aimHeadLock(enemy, weapon = "m1887") {
+  const offset = calculateHeadLockOffset(enemy, weapon);
+  return {
+    x: enemy.position.x + offset.x,
+    y: enemy.position.y + offset.y,
+    z: enemy.position.z + offset.z
+  };
+}
+
+function flickHeadshot(enemy, weapon = "m1887") {
+  const profile = config.weapon_profiles[weapon] || {};
+  const flickSpeed = profile.flick_speed || 1.0;
+  return {
+    x: enemy.position.x,
+    y: enemy.position.y,
+    z: enemy.position.z + enemy.height * 0.97 + Math.random() * 0.01 * flickSpeed
+  };
+}
+
+function recoilCompensation(weapon = "m1887") {
+  const recoil = config.recoil[weapon] || { x: 0, y: 0 };
+  return { x: -recoil.x, y: -recoil.y };
+}
+
+// ======= Shadowrocket Script Entry =======
+(async function () {
+  const req = typeof $request !== "undefined" ? JSON.parse($request.body || "{}") : {};
+  const enemy = req.enemy || {
+    position: { x: -0.015870847, y: 1.4875782, z: -0.0072678495 },
+    velocity: { x: 0.12, y: 0.03, z: 0 },
+    height: 1.8
+  };
+  const weapon = req.weapon || "m1887";
+
+  const result = {
+    aimLock: aimHeadLock(enemy, weapon),
+    flick: flickHeadshot(enemy, weapon),
+    recoil: recoilCompensation(weapon)
+  };
+
+  $done({ body: JSON.stringify(result) });
+})();
