@@ -1165,38 +1165,58 @@ function dragAimForceToBoneHead(currentAim, enemyBoneHead, armorZone, pullSpeed 
 function currentLockToBoneHead(currentAim, enemy, boneData = {}) {
   if (!enemy || !enemy.bone_Head) return currentAim;
 
-  // Lấy offset từ dữ liệu bone head
-  const offset = boneData.offset || { x: 0, y: 0, z: 0 };
-  const radius = boneData.radius || 360.0;
+  // Lấy offset và radius từ dữ liệu bone
+  const offset = boneData.offset || { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 };
+  const radius = boneData.radius || 0.035; // vùng khoá rất gần
 
-  // Tính vị trí head mục tiêu có offset
+  // Xác định vị trí chính giữa bone_Head
   const targetHead = {
     x: enemy.bone_Head.x + offset.x,
     y: enemy.bone_Head.y + offset.y,
     z: enemy.bone_Head.z + offset.z
   };
 
-  // Tính khoảng cách hiện tại đến target head
+  // Khoảng cách hiện tại
   const dx = targetHead.x - currentAim.x;
   const dy = targetHead.y - currentAim.y;
   const dz = targetHead.z - currentAim.z;
+  const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
 
-  const distance = Math.sqrt(dx ** 2 + dy ** 2 + dz ** 2);
-
-  // Nếu trong phạm vi lock → khoá cứng
-  if (distance < radius) {
-    return {
-      x: targetHead.x,
-      y: targetHead.y,
-      z: targetHead.z
-    };
+  // Nếu đã trong vùng lock => khoá cứng vào giữa đầu
+  if (dist < radius) {
+    return { x: targetHead.x, y: targetHead.y, z: targetHead.z };
   }
 
-  // Ngược lại, vẫn kéo dần đến
-  const step = 0.25; // Tốc độ kéo
+  // Ngược lại → kéo dần với tốc độ tuỳ chỉnh
+  const dragSpeed = 0.35;
   return {
-    x: currentAim.x + dx * step,
-    y: currentAim.y + dy * step,
-    z: currentAim.z + dz * step
+    x: currentAim.x + dx * dragSpeed,
+    y: currentAim.y + dy * dragSpeed,
+    z: currentAim.z + dz * dragSpeed
   };
 }
+$done({
+  body: JSON.stringify({
+    aim: currentLockToBoneHead(currentAim, enemy, boneData)
+  })
+});
+function lockToCenterBoneHead(enemy, boneData = {}) {
+  if (!enemy || !enemy.bone_Head) return null;
+
+  // Offset mặc định nếu thiếu
+  const offset = boneData.offset || { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 };
+
+  // Vị trí bone_Head trung tâm
+  const centerHead = {
+    x: enemy.bone_Head.x + offset.x,
+    y: enemy.bone_Head.y + offset.y,
+    z: enemy.bone_Head.z + offset.z
+  };
+
+  return centerHead;
+}
+$done({
+  body: JSON.stringify({
+    aim: lockToCenterBoneHead(enemy, bone_HeadData)
+  })
+});
