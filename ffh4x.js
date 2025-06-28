@@ -1105,3 +1105,98 @@ function adjustAimAfterPull(currentPos, targetHeadPos, armorZonePos, pullDistanc
 
   return currentPos;
 }
+function dragAimForceToBoneHead(currentAim, enemyBoneHead, armorZone, pullSpeed = 0.45, boneInfo = {}) {
+  // Lấy offset bone_Head (nếu có)
+  const offset = boneInfo.offset || { x: 0, y: 0, z: 0 };
+  const radius = boneInfo.radius || 6.5;
+
+  // Tính vị trí head mục tiêu sau offset
+  const target = {
+    x: enemyBoneHead.x + offset.x,
+    y: enemyBoneHead.y + offset.y,
+    z: enemyBoneHead.z + offset.z
+  };
+
+  // Tính vector hướng đến bone_Head
+  const dir = {
+    x: target.x - currentAim.x,
+    y: target.y - currentAim.y,
+    z: target.z - currentAim.z
+  };
+
+  // Tính độ dài khoảng cách
+  const dist = Math.sqrt(dir.x ** 2 + dir.y ** 2 + dir.z ** 2);
+  const normalizedDir = {
+    x: dir.x / (dist || 0.0001),
+    y: dir.y / (dist || 0.0001),
+    z: dir.z / (dist || 0.0001)
+  };
+
+  // Nếu gần armor → triệt tiêu một phần hướng lệch
+  const distToArmor = Math.sqrt(
+    (currentAim.x - armorZone.x) ** 2 +
+    (currentAim.y - armorZone.y) ** 2
+  );
+  const distToHead = Math.sqrt(
+    (currentAim.x - target.x) ** 2 +
+    (currentAim.y - target.y) ** 2
+  );
+
+  if (distToArmor < distToHead * 0.7) {
+    currentAim.x += (armorZone.x - currentAim.x) * 0.25;
+    currentAim.y += (armorZone.y - currentAim.y) * 0.25;
+  }
+
+  // Kéo theo hướng tới đầu với lực tỉ lệ pullSpeed
+  currentAim.x += normalizedDir.x * pullSpeed;
+  currentAim.y += normalizedDir.y * pullSpeed;
+  currentAim.z += normalizedDir.z * pullSpeed;
+
+  // Nếu đã trong vùng radius → kéo mạnh hơn (lock mạnh)
+  if (dist < radius) {
+    const lockBoost = (radius - dist) / radius;
+    currentAim.x += dir.x * lockBoost * 0.9;
+    currentAim.y += dir.y * lockBoost * 0.9;
+    currentAim.z += dir.z * lockBoost * 0.9;
+  }
+
+  return currentAim;
+}
+function currentLockToBoneHead(currentAim, enemy, boneData = {}) {
+  if (!enemy || !enemy.bone_Head) return currentAim;
+
+  // Lấy offset từ dữ liệu bone head
+  const offset = boneData.offset || { x: 0, y: 0, z: 0 };
+  const radius = boneData.radius || 360.0;
+
+  // Tính vị trí head mục tiêu có offset
+  const targetHead = {
+    x: enemy.bone_Head.x + offset.x,
+    y: enemy.bone_Head.y + offset.y,
+    z: enemy.bone_Head.z + offset.z
+  };
+
+  // Tính khoảng cách hiện tại đến target head
+  const dx = targetHead.x - currentAim.x;
+  const dy = targetHead.y - currentAim.y;
+  const dz = targetHead.z - currentAim.z;
+
+  const distance = Math.sqrt(dx ** 2 + dy ** 2 + dz ** 2);
+
+  // Nếu trong phạm vi lock → khoá cứng
+  if (distance < radius) {
+    return {
+      x: targetHead.x,
+      y: targetHead.y,
+      z: targetHead.z
+    };
+  }
+
+  // Ngược lại, vẫn kéo dần đến
+  const step = 0.25; // Tốc độ kéo
+  return {
+    x: currentAim.x + dx * step,
+    y: currentAim.y + dy * step,
+    z: currentAim.z + dz * step
+  };
+}
