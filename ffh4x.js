@@ -1267,23 +1267,7 @@ class Vector3 {
   }
 }
 
-// Chuyển từ toạ độ thế giới → camera
-function worldToCameraSpace(vec, forward, right, up) {
-  return new Vector3(
-    vec.x * right.x + vec.y * right.y + vec.z * right.z,
-    vec.x * up.x + vec.y * up.y + vec.z * up.z,
-    vec.x * forward.x + vec.y * forward.y + vec.z * forward.z
-  );
-}
 
-// Ngược lại: camera space → thế giới
-function cameraToWorldSpace(vec, forward, right, up) {
-  return new Vector3(
-    vec.x * right.x + vec.y * up.x + vec.z * forward.x,
-    vec.x * right.y + vec.y * up.y + vec.z * forward.y,
-    vec.x * right.z + vec.y * up.z + vec.z * forward.z
-  );
-}
 
 // === Core Aim Lock Engine ===
 class AimLockHeadLock {
