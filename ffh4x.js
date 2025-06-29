@@ -1220,3 +1220,165 @@ $done({
     aim: lockToCenterBoneHead(enemy, bone_HeadData)
   })
 });
+// 🎯 Khoá chính xác vào bone head
+function lockToBoneHead(enemy, boneData = {}) {
+  if (!enemy || !enemy.bone_Head) return null;
+
+  const offset = boneData.offset || { x: 0, y: 0, z: 0 };
+
+  // Tính vị trí chính xác của bone head với offset
+  const lockedHead = {
+    x: enemy.bone_Head.x + offset.x,
+    y: enemy.bone_Head.y + offset.y,
+    z: enemy.bone_Head.z + offset.z
+  };
+
+  return lockedHead;
+}
+
+// 🧠 Dữ liệu mô phỏng enemy từ hệ thống game (giả lập request)
+const enemy = req.enemy || {
+  bone_Head: { x: 22.0, y: 4.0, z: 1.8 }
+};
+
+// ⚙️ Cấu hình bone head center
+const boneHeadData = {
+  offset: { x: -0.0456970781, y: -0.004478302, z: -0.0200432576 },
+  radius: 0.00001 // radius cực nhỏ để chỉ lock đúng tâm
+};
+
+const result = lockToBoneHead(enemy, boneHeadData);
+
+// Xuất aim point ra hệ thống game
+$done({ body: JSON.stringify({ aim: result }) });
+class Vector3 {
+  constructor(x=0, y=0, z=0) {
+    this.x = x; this.y = y; this.z = z;
+  }
+  static zero() { return new Vector3(0,0,0); }
+  clone() { return new Vector3(this.x, this.y, this.z); }
+  subtract(v) { return new Vector3(this.x - v.x, this.y - v.y, this.z - v.z); }
+  add(v) { return new Vector3(this.x + v.x, this.y + v.y, this.z + v.z); }
+  multiplyScalar(s) { return new Vector3(this.x * s, this.y * s, this.z * s); }
+  length() { return Math.sqrt(this.x**2 + this.y**2 + this.z**2); }
+  normalize() {
+    const len = this.length();
+    return len === 0 ? Vector3.zero() : this.multiplyScalar(1 / len);
+  }
+}
+
+// Chuyển từ toạ độ thế giới → camera
+function worldToCameraSpace(vec, forward, right, up) {
+  return new Vector3(
+    vec.x * right.x + vec.y * right.y + vec.z * right.z,
+    vec.x * up.x + vec.y * up.y + vec.z * up.z,
+    vec.x * forward.x + vec.y * forward.y + vec.z * forward.z
+  );
+}
+
+// Ngược lại: camera space → thế giới
+function cameraToWorldSpace(vec, forward, right, up) {
+  return new Vector3(
+    vec.x * right.x + vec.y * up.x + vec.z * forward.x,
+    vec.x * right.y + vec.y * up.y + vec.z * forward.y,
+    vec.x * right.z + vec.y * up.z + vec.z * forward.z
+  );
+}
+
+// === Core Aim Lock Engine ===
+class AimLockHeadLock {
+  constructor(config = {}) {
+    this.config = {
+      leadTime: 0.12,
+      smoothFactor: 0.85,
+      maxLeadDistance: 2.0,
+      recoilSmoothFactor: 0.7,
+      ...config,
+    };
+    this.prevEnemyPos = null;
+    this.enemyVelocity = Vector3.zero();
+    this.smoothAimPos = Vector3.zero();
+    this.recoilOffset = Vector3.zero();
+    this.smoothedRecoilOffset = Vector3.zero();
+    this.lastUpdateTime = null;
+  }
+
+  updateEnemyVelocity(currentPos, currentTime) {
+    if (!this.prevEnemyPos) {
+      this.prevEnemyPos = currentPos.clone();
+      this.lastUpdateTime = currentTime;
+      return;
+    }
+    const dt = (currentTime - this.lastUpdateTime) / 1000;
+    if (dt <= 0) return;
+    const newVelocity = currentPos.subtract(this.prevEnemyPos).multiplyScalar(1 / dt);
+    this.enemyVelocity = new Vector3(
+      this.enemyVelocity.x * this.config.smoothFactor + newVelocity.x * (1 - this.config.smoothFactor),
+      this.enemyVelocity.y * this.config.smoothFactor + newVelocity.y * (1 - this.config.smoothFactor),
+      this.enemyVelocity.z * this.config.smoothFactor + newVelocity.z * (1 - this.config.smoothFactor),
+    );
+    this.prevEnemyPos = currentPos.clone();
+    this.lastUpdateTime = currentTime;
+  }
+
+  predictHeadPosition(headPos, leadTime) {
+    let predicted = headPos.add(this.enemyVelocity.multiplyScalar(leadTime));
+    const offsetVec = predicted.subtract(headPos);
+    if (offsetVec.length() > this.config.maxLeadDistance) {
+      predicted = headPos.add(offsetVec.normalize().multiplyScalar(this.config.maxLeadDistance));
+    }
+    return predicted;
+  }
+
+  updateRecoilOffset(newRecoilOffset) {
+    this.smoothedRecoilOffset = new Vector3(
+      this.smoothedRecoilOffset.x * this.config.recoilSmoothFactor + newRecoilOffset.x * (1 - this.config.recoilSmoothFactor),
+      this.smoothedRecoilOffset.y * this.config.recoilSmoothFactor + newRecoilOffset.y * (1 - this.config.recoilSmoothFactor),
+      this.smoothedRecoilOffset.z * this.config.recoilSmoothFactor + newRecoilOffset.z * (1 - this.config.recoilSmoothFactor),
+    );
+  }
+
+  smoothAim(targetPos) {
+    this.smoothAimPos = new Vector3(
+      this.smoothAimPos.x * this.config.smoothFactor + targetPos.x * (1 - this.config.smoothFactor),
+      this.smoothAimPos.y * this.config.smoothFactor + targetPos.y * (1 - this.config.smoothFactor),
+      this.smoothAimPos.z * this.config.smoothFactor + targetPos.z * (1 - this.config.smoothFactor),
+    );
+    return this.smoothAimPos.clone();
+  }
+
+  getAimPosition(playerPos, boneHeadPos, cameraForward, cameraRight, cameraUp, recoilOffset, currentTime) {
+    this.updateEnemyVelocity(boneHeadPos, currentTime);
+    this.updateRecoilOffset(recoilOffset);
+    const predictedHead = this.predictHeadPosition(boneHeadPos, this.config.leadTime);
+    const worldAimVec = predictedHead.subtract(playerPos);
+
+    const forward = cameraForward.normalize();
+    const right = cameraRight.normalize();
+    const up = cameraUp.normalize();
+
+    let localAimVec = worldToCameraSpace(worldAimVec, forward, right, up);
+    const localRecoilOffset = worldToCameraSpace(this.smoothedRecoilOffset, forward, right, up);
+    localAimVec = localAimVec.subtract(localRecoilOffset);
+
+    const smoothLocalAim = this.smoothAim(localAimVec);
+    const smoothWorldAim = cameraToWorldSpace(smoothLocalAim, forward, right, up);
+    return playerPos.add(smoothWorldAim);
+  }
+}
+const aimEngine = new AimLockHeadLock();
+const boneHead = req.enemy?.bone_Head || { x: 22, y: 4, z: 2.1 };
+const playerPos = new Vector3(0, 0, 0);
+const cameraF = new Vector3(0, 0, 1);
+const cameraR = new Vector3(1, 0, 0);
+const cameraU = new Vector3(0, 1, 0);
+const recoil = new Vector3(0.02, -0.01, 0.005);
+const timeNow = Date.now();
+
+const aimResult = aimEngine.getAimPosition(
+  playerPos, new Vector3(boneHead.x, boneHead.y, boneHead.z),
+  cameraF, cameraR, cameraU,
+  recoil, timeNow
+);
+
+$done({ body: JSON.stringify({ aim: aimResult }) });
