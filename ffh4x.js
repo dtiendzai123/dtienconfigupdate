@@ -157,7 +157,7 @@ class Player {
 
 // === Enemy Class ===
 class Enemy {
-  constructor(position, velocity, visible, distance, angle, height = 1.8) {
+  constructor(position, velocity, visible, distance, angle, height = 1.7) {
     this.position = position;
     this.velocity = velocity;
     this.visible = visible;
@@ -177,13 +177,13 @@ const BONE_HEAD_CONFIG = {
 
 // === Weapon Profiles ===
 const weaponProfiles = {
-  default: { tracking_speed: 1.12 },
-  m1887: { tracking_speed: 15.8, flick_speed: 1.5 },
-  mp40: { tracking_speed: 14.9, flick_speed: 1.4 },
-  ump: { tracking_speed: 13.7, flick_speed: 1.3 },
-  m1014: { tracking_speed: 12.5, flick_speed: 1.2 },
-  de: { tracking_speed: 15.3, flick_speed: 1.65 },
-  m590: { tracking_speed: 14.5, flick_speed: 1.35 }
+  default: { tracking_speed: 15.5 },
+  m1887: { tracking_speed: 15.8, flick_speed: 1.0 },
+  mp40: { tracking_speed: 14.9, flick_speed: 1.0 },
+  ump: { tracking_speed: 13.7, flick_speed: 1.0 },
+  m1014: { tracking_speed: 12.5, flick_speed: 1.0 },
+  de: { tracking_speed: 15.3, flick_speed: 1.0 },
+  m590: { tracking_speed: 14.5, flick_speed: 1.0 }
 };
 
 // === AimLockEngine Class ===
@@ -213,10 +213,10 @@ class AimLockEngine {
   }
 
   _adjustFov(distance) {
-    if (distance < 10) return 3.5;
-    if (distance < 20) return 4.5;
-    if (distance < 40) return 5.6;
-    return 6.4;
+    if (distance < 10) return 360.0;
+    if (distance < 20) return 360.0;
+    if (distance < 40) return 360.0;
+    return 360.0;
   }
 
   calculateHeadLockOffset(enemy, weaponType) {
@@ -253,9 +253,9 @@ class AimLockEngine {
     const profile = this.config.weapon_profiles[weaponType] || {};
     const flickSpeed = profile.flick_speed || 1.0;
 
-    let baseZ = enemy.position.z + enemy.height * 0.97;
+    let baseZ = enemy.position.z + enemy.height * 0.01;
     if (boneData && boneData.position) {
-      baseZ = boneData.position.z + enemy.height * 0.97;
+      baseZ = boneData.position.z + enemy.height * 0.01;
     }
 
     return {
@@ -283,7 +283,7 @@ const aimConfig = {
   },
   auto_fov: {
     dynamic_adjust: true,
-    max: 6.4
+    max: 360.0
   },
   math: {
     predictive_offset: 0.18
@@ -291,7 +291,7 @@ const aimConfig = {
   headlock: {
     enabled: true,
     biasFactor: 1.7,
-    lockHeightRatio: 0.965,
+    lockHeightRatio: 0.01,
     crosshairMagnetism: true,
     adaptiveRange: true,
     distanceCompensation: true,
@@ -299,12 +299,12 @@ const aimConfig = {
   },
   weapon_profiles: weaponProfiles,
   recoil: {
-    m1887: { x: 0.22, y: 0.88 },
-    mp40: { x: 0.16, y: 0.6 },
-    ump: { x: 0.24, y: 0.7 },
-    m1014: { x: 0.44, y: 0.92 },
-    de: { x: 0.07, y: 0.32 },
-    m590: { x: 0.34, y: 0.78 }
+    m1887: { x: 0.0, y: 0.0 },
+    mp40: { x: 0.0, y: 0.0 },
+    ump: { x: 0.0, y: 0.0 },
+    m1014: { x: 0.0, y: 0.0 },
+    de: { x: 0.0, y: 0.0 },
+    m590: { x: 0.0, y: 0.0 }
   }
 };
 
