@@ -482,7 +482,7 @@ if (url.includes("/api/config") || url.includes("/api/aim")) {
   "screen.touch.speed_min": 0.0001,
   "screen.touch.speed_max": 0.0035,
 "aim.headlock.lock_radius_limit": true,
-"aim.headlock.lock_radius_max": 1.0
+"aim.headlock.lock_radius_max": 1.0,
   // 🧠 Nhạy mục tiêu headlock
   "aim.headlock.snap_strength": 2.0,
   "aim.headlock.smooth_factor": 0.7,
