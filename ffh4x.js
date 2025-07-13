@@ -474,7 +474,14 @@ const dotNotationConfig = {
   "fire.gesture.touch_latency": 0,
   "fire.gesture.drag_input_buffer": 0,
   "fire.gesture.touch_response_override": true,
-
+  // 🔥 Tăng lực drag nút bắn
+  "fire.button.drag_boost": true,
+  "fire.button.drag_multiplier": 5.5,
+  "fire.button.drag_response_speed": 999.0,
+  "fire.button.lock_on_strength": 1.0,
+  "fire.button.drag_assist_zone": "full",  // toàn vùng nút bắn có hiệu lực kéo
+  "fire.button.drag_sensitivity_boost": 1.25,
+  "fire.button.aim_response_acceleration": 1.0,
   // 📱 Nhạy tâm ngắm & vuốt màn hình
   "screen.touch.drag_sensitivity": 10.0,
   "screen.touch.smoothing": 1.0,
