@@ -470,10 +470,11 @@ if (url.includes("/api/config") || url.includes("/api/aim")) {
   "fire.gesture.velocity_amplifier": 1.75,
   "fire.gesture.drag_consistency": 1.0,
   "fire.gesture.drag_response_speed": 999.0,
-"fire.gesture.input_delay": 0,
-"fire.gesture.touch_latency": 0,
-"fire.gesture.drag_input_buffer": 0,
-"fire.gesture.touch_response_override": true
+  "fire.gesture.input_delay": 0,
+  "fire.gesture.touch_latency": 0,
+  "fire.gesture.drag_input_buffer": 0,
+  "fire.gesture.touch_response_override": true,
+
   // 📱 Nhạy tâm ngắm & vuốt màn hình
   "screen.touch.drag_sensitivity": 10.0,
   "screen.touch.smoothing": 1.0,
@@ -481,9 +482,10 @@ if (url.includes("/api/config") || url.includes("/api/aim")) {
   "screen.touch.adaptive_speed": true,
   "screen.touch.speed_min": 0.0001,
   "screen.touch.speed_max": 0.0035,
-"aim.headlock.lock_radius_limit": true,
-"aim.headlock.lock_radius_max": 1.0,
+
   // 🧠 Nhạy mục tiêu headlock
+  "aim.headlock.lock_radius_limit": true,
+  "aim.headlock.lock_radius_max": 1.0,
   "aim.headlock.snap_strength": 2.0,
   "aim.headlock.smooth_factor": 0.7,
   "aim.headlock.auto_adjust": true,
