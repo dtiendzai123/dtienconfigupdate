@@ -489,7 +489,31 @@ const dotNotationConfig = {
   "screen.touch.adaptive_speed": true,
   "screen.touch.speed_min": 0.0001,
   "screen.touch.speed_max": 0.0035,
+  "aimHeadLock.aimBone": "bone_Head",
+  "aimHeadLock.autoLock": true,
+  "aimHeadLock.lockInjection": true,
+  "aimHeadLock.lockStrength": "maximum",
+  "aimHeadLock.snapBias": 1.0,
+  "aimHeadLock.trackingSpeed": 1.0,
+  "aimHeadLock.dragCorrectionSpeed": 5.0,
+  "aimHeadLock.snapToleranceAngle": 1.5,
+  "aimHeadLock.maxLockAngle": 360,
+  "aimHeadLock.stickiness": "high",
+  "aimHeadLock.headStickPriority": true,
 
+  // 🧠 Dữ liệu xương Head
+  "aimHeadLock.boneHead_position_x": -0.0456970781,
+  "aimHeadLock.boneHead_position_y": -0.004478302,
+  "aimHeadLock.boneHead_position_z": -0.0200432576,
+
+  "aimHeadLock.boneHead_rotation_x": 0.0258174837,
+  "aimHeadLock.boneHead_rotation_y": -0.08611039,
+  "aimHeadLock.boneHead_rotation_z": -0.1402113,
+  "aimHeadLock.boneHead_rotation_w": 0.9860321,
+
+  "aimHeadLock.boneHead_scale_x": 0.99999994,
+  "aimHeadLock.boneHead_scale_y": 1.00000012,
+  "aimHeadLock.boneHead_scale_z": 1.0,
   // 🧠 Nhạy mục tiêu headlock
   "aim.headlock.lock_radius_limit": true,
   "aim.headlock.lock_radius_max": 1.0,
