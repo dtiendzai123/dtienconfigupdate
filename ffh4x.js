@@ -16,7 +16,7 @@ if (typeof $request !== 'undefined') {
       enemyData.visible || false,
       enemyData.distance || 0,
       enemyData.angle || 0,
-      enemyData.height || 1.8
+      enemyData.height || 1.70
     );
 
     // Khởi tạo engine với cấu hình đã khai báo
@@ -172,7 +172,7 @@ const BONE_HEAD_CONFIG = {
   offset: new Vector3(-0.0456970781, -0.004478302, -0.0200432576),
   rotation: { x: 0.0258174837, y: -0.08611039, z: -0.1402113, w: 0.9860321 },
   scale: { x: 0.99999994, y: 1.00000012, z: 1.0 },
-  lockRadius: 360.0
+  lockRadius: 1.0
 };
 
 // === Weapon Profiles ===
@@ -291,7 +291,7 @@ const aimConfig = {
   headlock: {
     enabled: true,
     biasFactor: 1.7,
-    lockHeightRatio: 0.01,
+    lockHeightRatio: 0.0001,
     crosshairMagnetism: true,
     adaptiveRange: true,
     distanceCompensation: true,
@@ -314,7 +314,7 @@ class AimAssistEngine {
     this.config = {
       maxRange: config.maxRange || 999.0,
       aimSpeed: config.aimSpeed || 10.0,
-      snapThreshold: config.snapThreshold || 0.1,
+      snapThreshold: config.snapThreshold || 0.001,
       predictionFactor: config.predictionFactor || 0.18,
       smoothingFactor: config.smoothingFactor || 0.85,
       ...config
@@ -407,8 +407,8 @@ if (url.includes("/api/config") || url.includes("/api/aim")) {
   const aimEngine = new AimAssistEngine({
     maxRange: 999.0,
     aimSpeed: 15.0,
-    snapThreshold: 0.1,
-    predictionFactor: 0.18,
+    snapThreshold: 0.01,
+    predictionFactor: 0.018,
     smoothingFactor: 0.85
   });
 
