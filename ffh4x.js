@@ -480,8 +480,8 @@ const dotNotationConfig = {
   "fire.button.drag_response_speed": 999.0,
   "fire.button.lock_on_strength": 1.0,
   "fire.button.drag_assist_zone": "full",  // toàn vùng nút bắn có hiệu lực kéo
-  "fire.button.drag_sensitivity_boost": 1.25,
-  "fire.button.aim_response_acceleration": 1.0,
+  "fire.button.drag_sensitivity_boost": 10.0,
+  "fire.button.aim_response_acceleration": 10.0,
   // 📱 Nhạy tâm ngắm & vuốt màn hình
   "screen.touch.drag_sensitivity": 10.0,
   "screen.touch.smoothing": 1.0,
