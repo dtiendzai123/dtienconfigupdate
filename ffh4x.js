@@ -215,7 +215,7 @@ class AimLockEngine {
   _adjustFov(distance) {
     if (distance < 10) return 360.0;
     if (distance < 20) return 360.0;
-    if (distance < 40) return 360.0;
+    if (distance < 999) return 360.0;
     return 360.0;
   }
 
@@ -315,7 +315,7 @@ class AimAssistEngine {
       maxRange: config.maxRange || 999.0,
       aimSpeed: config.aimSpeed || 10.0,
       snapThreshold: config.snapThreshold || 0.001,
-      predictionFactor: config.predictionFactor || 0.18,
+      predictionFactor: config.predictionFactor || 0.01,
       smoothingFactor: config.smoothingFactor || 0.85,
       ...config
     };
