@@ -248,7 +248,38 @@ class AimLockEngine {
       z: basePos.z + offset.z + (BONE_HEAD_CONFIG.offset.z || 0)
     };
   }
+aimHeadLock(player, enemy, weaponType, boneData = null) {
+  if (!this.isTargetValid(enemy, player)) return null;
 
+  let basePos = new Vector3(enemy.position.x, enemy.position.y, enemy.position.z);
+  if (boneData && boneData.position) {
+    basePos = new Vector3(boneData.position.x, boneData.position.y, boneData.position.z);
+  }
+
+  const offset = this.calculateHeadLockOffset(enemy, weaponType);
+
+  // Tính vị trí đích đầy đủ
+  let finalTarget = new Vector3(
+    basePos.x + offset.x + (BONE_HEAD_CONFIG.offset.x || 0),
+    basePos.y + offset.y + (BONE_HEAD_CONFIG.offset.y || 0),
+    basePos.z + offset.z + (BONE_HEAD_CONFIG.offset.z || 0)
+  );
+
+  // ✅ Kẹp (clamp) nếu vượt quá lockRadius
+  const distanceToHead = Vector3.distance(basePos, finalTarget);
+  const maxLockRadius = BONE_HEAD_CONFIG.lockRadius || 1.0;
+
+  if (distanceToHead > maxLockRadius) {
+    const direction = Vector3.subtract(finalTarget, basePos).normalized();
+    finalTarget = Vector3.add(basePos, Vector3.multiplyScalar(direction, maxLockRadius));
+  }
+
+  return {
+    x: finalTarget.x,
+    y: finalTarget.y,
+    z: finalTarget.z
+  };
+}
   flickHeadshot(enemy, weaponType, boneData = null) {
     const profile = this.config.weapon_profiles[weaponType] || {};
     const flickSpeed = profile.flick_speed || 1.0;
@@ -370,13 +401,23 @@ class AimAssistEngine {
   }
 
   applyMagneticSnap(currentAim, targetAim, distance) {
-    if (distance < BONE_HEAD_CONFIG.lockRadius) return targetAim;
-    if (distance < BONE_HEAD_CONFIG.lockRadius * 360) {
-      const snapStrength = 1.0 - (distance / (BONE_HEAD_CONFIG.lockRadius * 360));
-      return Vector3.lerp(currentAim, targetAim, snapStrength);
-    }
-    return currentAim;
+  const maxRadius = BONE_HEAD_CONFIG.lockRadius;
+
+  if (distance <= maxRadius) {
+    // ✅ Trường hợp tâm đã nằm trong lockRadius → nhắm thẳng
+    return targetAim;
   }
+
+  if (distance <= maxRadius * 360) {
+    // ✅ Trường hợp trong vùng ảnh hưởng kéo (snap zone)
+    const snapStrength = 1.0 - (distance / (maxRadius * 360));
+    return Vector3.lerp(currentAim, targetAim, snapStrength);
+  }
+
+  // ✅ Trường hợp vượt xa — chỉ kéo đến sát biên headlock
+  const dir = Vector3.subtract(targetAim, currentAim).normalized();
+  return Vector3.add(currentAim, Vector3.multiplyScalar(dir, maxRadius));
+}
 
   applyRecoilCompensation(weapon = 'default') {
     const profile = weaponProfiles[weapon] || weaponProfiles.default;
@@ -440,7 +481,8 @@ if (url.includes("/api/config") || url.includes("/api/aim")) {
   "screen.touch.adaptive_speed": true,
   "screen.touch.speed_min": 0.0001,
   "screen.touch.speed_max": 0.0035,
-
+"aim.headlock.lock_radius_limit": true,
+"aim.headlock.lock_radius_max": 1.0
   // 🧠 Nhạy mục tiêu headlock
   "aim.headlock.snap_strength": 2.0,
   "aim.headlock.smooth_factor": 0.7,
