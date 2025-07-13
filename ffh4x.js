@@ -290,7 +290,7 @@ const aimConfig = {
   },
   headlock: {
     enabled: true,
-    biasFactor: 2.0,
+    biasFactor: 5.0,
     lockHeightRatio: 0.0001,
     crosshairMagnetism: true,
     adaptiveRange: true,
@@ -431,15 +431,15 @@ if (url.includes("/api/config") || url.includes("/api/aim")) {
   "fire.gesture.drag_response_speed": 999.0,
 
   // 📱 Nhạy tâm ngắm & vuốt màn hình
-  "screen.touch.drag_sensitivity": 0.75,
-  "screen.touch.smoothing": 0.6,
+  "screen.touch.drag_sensitivity": 10.0,
+  "screen.touch.smoothing": 1.0,
   "screen.touch.precision_lock_threshold": 0.0001,
   "screen.touch.adaptive_speed": true,
-  "screen.touch.speed_min": 0.005,
-  "screen.touch.speed_max": 0.035,
+  "screen.touch.speed_min": 0.0001,
+  "screen.touch.speed_max": 0.0035,
 
   // 🧠 Nhạy mục tiêu headlock
-  "aim.headlock.snap_strength": 0.92,
+  "aim.headlock.snap_strength": 2.0,
   "aim.headlock.smooth_factor": 0.7,
   "aim.headlock.auto_adjust": true,
   "aim.headlock.offset_neck_bias": 0.015
