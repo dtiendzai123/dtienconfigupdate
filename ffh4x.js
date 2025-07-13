@@ -407,27 +407,43 @@ if (url.includes("/api/config") || url.includes("/api/aim")) {
   const aimEngine = new AimAssistEngine({
     maxRange: 999.0,
     aimSpeed: 15.0,
-    snapThreshold: 0.01,
+    snapThreshold: 0.001,
     predictionFactor: 0.018,
     smoothingFactor: 0.85
   });
 
-  const dotNotationConfig = JSON.parse(`{
-    "input_lock_on_precision_mode": "head_3d_tracking",
-    "input_lock_on_track_velocity": true,
-    "input_lock_on_rotation_tracking": true,
-    "input_lock_on_predict_movement": true,
-    "input_lock_on_keep_xy": true,
-    "input_lock_on_offset_x": ${BONE_HEAD_CONFIG.offset.x},
-    "input_lock_on_offset_y": ${BONE_HEAD_CONFIG.offset.y},
-    "input_lock_on_offset_z": ${BONE_HEAD_CONFIG.offset.z},
-    "fire.gesture.drag_assist": true,
-    "fire.gesture.drag_force_multiplier": 4.0,
-    "fire.gesture.input_response_speed": 98.0,
-    "fire.gesture.velocity_amplifier": 1.75,
-    "fire.gesture.drag_consistency": 1.0,
-    "fire.gesture.drag_response_speed": 999.0
-  }`);
+  const dotNotationConfig = {
+  "input_lock_on_precision_mode": "head_3d_tracking",
+  "input_lock_on_track_velocity": true,
+  "input_lock_on_rotation_tracking": true,
+  "input_lock_on_predict_movement": true,
+  "input_lock_on_keep_xy": true,
+  "input_lock_on_offset_x": BONE_HEAD_CONFIG.offset.x,
+  "input_lock_on_offset_y": BONE_HEAD_CONFIG.offset.y,
+  "input_lock_on_offset_z": BONE_HEAD_CONFIG.offset.z,
+
+  // 🎯 Vuốt chính xác & phản hồi nhanh
+  "fire.gesture.drag_assist": true,
+  "fire.gesture.drag_force_multiplier": 4.0,
+  "fire.gesture.input_response_speed": 98.0,
+  "fire.gesture.velocity_amplifier": 1.75,
+  "fire.gesture.drag_consistency": 1.0,
+  "fire.gesture.drag_response_speed": 999.0,
+
+  // 📱 Nhạy tâm ngắm & vuốt màn hình
+  "screen.touch.drag_sensitivity": 0.75,
+  "screen.touch.smoothing": 0.6,
+  "screen.touch.precision_lock_threshold": 0.0001,
+  "screen.touch.adaptive_speed": true,
+  "screen.touch.speed_min": 0.005,
+  "screen.touch.speed_max": 0.035,
+
+  // 🧠 Nhạy mục tiêu headlock
+  "aim.headlock.snap_strength": 0.92,
+  "aim.headlock.smooth_factor": 0.7,
+  "aim.headlock.auto_adjust": true,
+  "aim.headlock.offset_neck_bias": 0.015
+};
 
   const expandedConfig = expandKeys(dotNotationConfig);
   const finalConfig = deepMerge({}, expandedConfig);
