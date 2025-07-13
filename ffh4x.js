@@ -425,11 +425,14 @@ if (url.includes("/api/config") || url.includes("/api/aim")) {
   // 🎯 Vuốt chính xác & phản hồi nhanh
   "fire.gesture.drag_assist": true,
   "fire.gesture.drag_force_multiplier": 4.0,
-  "fire.gesture.input_response_speed": 98.0,
+  "fire.gesture.input_response_speed": 999.0,
   "fire.gesture.velocity_amplifier": 1.75,
   "fire.gesture.drag_consistency": 1.0,
   "fire.gesture.drag_response_speed": 999.0,
-
+"fire.gesture.input_delay": 0,
+"fire.gesture.touch_latency": 0,
+"fire.gesture.drag_input_buffer": 0,
+"fire.gesture.touch_response_override": true
   // 📱 Nhạy tâm ngắm & vuốt màn hình
   "screen.touch.drag_sensitivity": 10.0,
   "screen.touch.smoothing": 1.0,
