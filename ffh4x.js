@@ -290,7 +290,7 @@ const aimConfig = {
   },
   headlock: {
     enabled: true,
-    biasFactor: 1.7,
+    biasFactor: 2.0,
     lockHeightRatio: 0.0001,
     crosshairMagnetism: true,
     adaptiveRange: true,
