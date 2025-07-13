@@ -453,7 +453,7 @@ if (url.includes("/api/config") || url.includes("/api/aim")) {
     smoothingFactor: 0.85
   });
 
-  const dotNotationConfig = {
+const dotNotationConfig = {
   "input_lock_on_precision_mode": "head_3d_tracking",
   "input_lock_on_track_velocity": true,
   "input_lock_on_rotation_tracking": true,
