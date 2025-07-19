@@ -338,7 +338,10 @@ const aimConfig = {
     m590: { x: 0.0, y: 0.0 }
   }
 };
-
+const GamePackages = {
+  GamePackage1: "com.dts.freefireth",
+  GamePackage2: "com.dts.freefiremax"
+};
 // === AimAssistEngine Class (Kết hợp thêm predictive và smoothing) ===
 class AimAssistEngine {
   constructor(config = {}) {
@@ -522,7 +525,10 @@ const dotNotationConfig = {
   "aim.headlock.auto_adjust": true,
   "aim.headlock.offset_neck_bias": 0.015
 };
-
+const GamePackages = {
+  GamePackage1: "com.dts.freefireth",
+  GamePackage2: "com.dts.freefiremax"
+};
   const expandedConfig = expandKeys(dotNotationConfig);
   const finalConfig = deepMerge({}, expandedConfig);
 
