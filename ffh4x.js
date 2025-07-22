@@ -172,7 +172,7 @@ const BONE_HEAD_CONFIG = {
   offset: new Vector3(-0.0456970781, -0.004478302, -0.0200432576),
   rotation: { x: 0.0258174837, y: -0.08611039, z: -0.1402113, w: 0.9860321 },
   scale: { x: 0.99999994, y: 1.00000012, z: 1.0 },
-  lockRadius: 1.0
+  lockRadius: 360.0
 };
 
 // === Weapon Profiles ===
@@ -267,7 +267,7 @@ aimHeadLock(player, enemy, weaponType, boneData = null) {
 
   // ✅ Kẹp (clamp) nếu vượt quá lockRadius
   const distanceToHead = Vector3.distance(basePos, finalTarget);
-  const maxLockRadius = BONE_HEAD_CONFIG.lockRadius || 1.0;
+  const maxLockRadius = BONE_HEAD_CONFIG.lockRadius || 360.0;
 
   if (distanceToHead > maxLockRadius) {
     const direction = Vector3.subtract(finalTarget, basePos).normalized();
@@ -284,9 +284,9 @@ aimHeadLock(player, enemy, weaponType, boneData = null) {
     const profile = this.config.weapon_profiles[weaponType] || {};
     const flickSpeed = profile.flick_speed || 1.0;
 
-    let baseZ = enemy.position.z + enemy.height * 0.01;
+    let baseZ = enemy.position.z + enemy.height * 1.70;
     if (boneData && boneData.position) {
-      baseZ = boneData.position.z + enemy.height * 0.01;
+      baseZ = boneData.position.z + enemy.height * 1.70;
     }
 
     return {
@@ -349,7 +349,7 @@ class AimAssistEngine {
       maxRange: config.maxRange || 999.0,
       aimSpeed: config.aimSpeed || 10.0,
       snapThreshold: config.snapThreshold || 0.001,
-      predictionFactor: config.predictionFactor || 0.01,
+      predictionFactor: config.predictionFactor || 0.0001,
       smoothingFactor: config.smoothingFactor || 0.85,
       ...config
     };
@@ -450,7 +450,7 @@ const url = $request.url;
 if (url.includes("/api/config") || url.includes("/api/aim")) {
   const aimEngine = new AimAssistEngine({
     maxRange: 999.0,
-    aimSpeed: 15.0,
+    aimSpeed: 150.0,
     snapThreshold: 0.001,
     predictionFactor: 0.018,
     smoothingFactor: 0.85
@@ -468,10 +468,10 @@ const dotNotationConfig = {
 
   // 🎯 Vuốt chính xác & phản hồi nhanh
   "fire.gesture.drag_assist": true,
-  "fire.gesture.drag_force_multiplier": 4.0,
+  "fire.gesture.drag_force_multiplier": 40.0,
   "fire.gesture.input_response_speed": 999.0,
-  "fire.gesture.velocity_amplifier": 1.75,
-  "fire.gesture.drag_consistency": 1.0,
+  "fire.gesture.velocity_amplifier": 10.75,
+  "fire.gesture.drag_consistency": 10.0,
   "fire.gesture.drag_response_speed": 999.0,
   "fire.gesture.input_delay": 0,
   "fire.gesture.touch_latency": 0,
@@ -479,9 +479,9 @@ const dotNotationConfig = {
   "fire.gesture.touch_response_override": true,
   // 🔥 Tăng lực drag nút bắn
   "fire.button.drag_boost": true,
-  "fire.button.drag_multiplier": 5.5,
-  "fire.button.drag_response_speed": 999.0,
-  "fire.button.lock_on_strength": 1.0,
+  "fire.button.drag_multiplier": 10.5,
+  "fire.button.drag_response_speed": 9999.0,
+  "fire.button.lock_on_strength": 10.0,
   "fire.button.drag_assist_zone": "full",  // toàn vùng nút bắn có hiệu lực kéo
   "fire.button.drag_sensitivity_boost": 10.0,
   "fire.button.aim_response_acceleration": 10.0,
@@ -496,10 +496,10 @@ const dotNotationConfig = {
   "aimHeadLock.autoLock": true,
   "aimHeadLock.lockInjection": true,
   "aimHeadLock.lockStrength": "maximum",
-  "aimHeadLock.snapBias": 1.0,
-  "aimHeadLock.trackingSpeed": 1.0,
-  "aimHeadLock.dragCorrectionSpeed": 5.0,
-  "aimHeadLock.snapToleranceAngle": 1.5,
+  "aimHeadLock.snapBias": 10.0,
+  "aimHeadLock.trackingSpeed": 10.0,
+  "aimHeadLock.dragCorrectionSpeed": 10.0,
+  "aimHeadLock.snapToleranceAngle": 11.5,
   "aimHeadLock.maxLockAngle": 360,
   "aimHeadLock.stickiness": "high",
   "aimHeadLock.headStickPriority": true,
@@ -519,8 +519,8 @@ const dotNotationConfig = {
   "aimHeadLock.boneHead_scale_z": 1.0,
   // 🧠 Nhạy mục tiêu headlock
   "aim.headlock.lock_radius_limit": true,
-  "aim.headlock.lock_radius_max": 1.0,
-  "aim.headlock.snap_strength": 2.0,
+  "aim.headlock.lock_radius_max": 360.0,
+  "aim.headlock.snap_strength": 10.0,
   "aim.headlock.smooth_factor": 0.7,
   "aim.headlock.auto_adjust": true,
   "aim.headlock.offset_neck_bias": 0.015
