@@ -16,7 +16,7 @@ if (typeof $request !== 'undefined') {
       enemyData.visible || false,
       enemyData.distance || 0,
       enemyData.angle || 0,
-      enemyData.height || 1.70
+      enemyData.height || 0.00907892
     );
 
     // Khởi tạo engine với cấu hình đã khai báo
@@ -450,10 +450,10 @@ const url = $request.url;
 if (url.includes("/api/config") || url.includes("/api/aim")) {
   const aimEngine = new AimAssistEngine({
     maxRange: 999.0,
-    aimSpeed: 150.0,
+    aimSpeed: 50.0,
     snapThreshold: 0.001,
     predictionFactor: 0.018,
-    smoothingFactor: 0.85
+    smoothingFactor: 10.0
   });
 
 const dotNotationConfig = {
