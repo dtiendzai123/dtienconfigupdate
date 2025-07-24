@@ -260,9 +260,9 @@ aimHeadLock(player, enemy, weaponType, boneData = null) {
 
   // Tính vị trí đích đầy đủ
   let finalTarget = new Vector3(
-    basePos.x + offset.x + (BONE_HEAD_CONFIG.offset.x || 0),
-    basePos.y + offset.y + (BONE_HEAD_CONFIG.offset.y || 0),
-    basePos.z + offset.z + (BONE_HEAD_CONFIG.offset.z || 0)
+    basePos.x + offset.x + (BONE_HEAD_CONFIG.offset.x || -0.04089227),
+    basePos.y + offset.y + (BONE_HEAD_CONFIG.offset.y || 0.00907892),
+    basePos.z + offset.z + (BONE_HEAD_CONFIG.offset.z || 0.02748467)
   );
 
   // ✅ Kẹp (clamp) nếu vượt quá lockRadius
@@ -284,9 +284,9 @@ aimHeadLock(player, enemy, weaponType, boneData = null) {
     const profile = this.config.weapon_profiles[weaponType] || {};
     const flickSpeed = profile.flick_speed || 1.0;
 
-    let baseZ = enemy.position.z + enemy.height * 1.70;
+    let baseZ = enemy.position.z + enemy.height * 0.02748467;
     if (boneData && boneData.position) {
-      baseZ = boneData.position.z + enemy.height * 1.70;
+      baseZ = boneData.position.z + enemy.height * 0.02748467;
     }
 
     return {
@@ -486,7 +486,7 @@ const dotNotationConfig = {
   "fire.button.drag_sensitivity_boost": 10.0,
   "fire.button.aim_response_acceleration": 10.0,
   // 📱 Nhạy tâm ngắm & vuốt màn hình
-  "screen.touch.drag_sensitivity": 10.0,
+  "screen.touch.drag_sensitivity": 8.0,
   "screen.touch.smoothing": 1.0,
   "screen.touch.precision_lock_threshold": 0.0001,
   "screen.touch.adaptive_speed": true,
@@ -496,10 +496,10 @@ const dotNotationConfig = {
   "aimHeadLock.autoLock": true,
   "aimHeadLock.lockInjection": true,
   "aimHeadLock.lockStrength": "maximum",
-  "aimHeadLock.snapBias": 10.0,
-  "aimHeadLock.trackingSpeed": 10.0,
-  "aimHeadLock.dragCorrectionSpeed": 10.0,
-  "aimHeadLock.snapToleranceAngle": 11.5,
+  "aimHeadLock.snapBias": 5.0,
+  "aimHeadLock.trackingSpeed": 7.0,
+  "aimHeadLock.dragCorrectionSpeed": 7.0,
+  "aimHeadLock.snapToleranceAngle": 7.5,
   "aimHeadLock.maxLockAngle": 360,
   "aimHeadLock.stickiness": "high",
   "aimHeadLock.headStickPriority": true,
