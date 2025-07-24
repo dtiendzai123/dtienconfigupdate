@@ -14,7 +14,7 @@ if (typeof $request !== 'undefined') {
       new Vector3(enemyData.position?.x || 0, enemyData.position?.y || 0, enemyData.position?.z || 0),
       new Vector3(enemyData.velocity?.x || 0, enemyData.velocity?.y || 0, enemyData.velocity?.z || 0),
       enemyData.visible || false,
-      enemyData.distance || 0,
+      enemyData.distance || 9999,
       enemyData.angle || 0,
       enemyData.height || 0.00907892
     );
@@ -308,7 +308,7 @@ aimHeadLock(player, enemy, weaponType, boneData = null) {
 // === Full Config ===
 const aimConfig = {
   fake_screen: {
-    resolution: "3840x2160",
+    resolution: "2752x2064",
     dpi: 3600,
     sensitivity_multiplier: 6.8
   },
@@ -317,7 +317,7 @@ const aimConfig = {
     max: 360.0
   },
   math: {
-    predictive_offset: 0.18
+    predictive_offset: 0.02748467
   },
   headlock: {
     enabled: true,
