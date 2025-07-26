@@ -3,7 +3,7 @@ if (typeof $request !== 'undefined') {
     const body = JSON.parse($request.body || '{}');
 
     // Khởi tạo player (vị trí gốc và hướng nhìn mặc định)
-    const player = new Player(new Vector3(0, 0, 0), new Vector3(0, 0, 1));
+    const player = new Player(new Vector3(0, 0, 0), new Vector3(360, 360, 360));
 
     // Lấy dữ liệu enemy từ body request
     const enemyData = body.enemy || {};
@@ -11,7 +11,7 @@ if (typeof $request !== 'undefined') {
 
     // Tạo đối tượng Enemy từ dữ liệu nhận được
     const enemy = new Enemy(
-      new Vector3(enemyData.position?.x || 0, enemyData.position?.y || 0, enemyData.position?.z || 0),
+      new Vector3(enemyData.position?.x || -0.0456970781, enemyData.position?.y || -0.004478302, enemyData.position?.z || -0.0200432576),
       new Vector3(enemyData.velocity?.x || 0, enemyData.velocity?.y || 0, enemyData.velocity?.z || 0),
       enemyData.visible || false,
       enemyData.distance || 9999,
@@ -177,14 +177,14 @@ const BONE_HEAD_CONFIG = {
 
 // === Weapon Profiles ===
 const weaponProfiles = {
-  default: { tracking_speed: 15.5 },
-  m1887: { tracking_speed: 15.8, flick_speed: 1.0 },
-  mp40: { tracking_speed: 14.9, flick_speed: 1.0 },
-  ump: { tracking_speed: 13.7, flick_speed: 1.0 },
-  m1014: { tracking_speed: 12.5, flick_speed: 1.0 },
-  de: { tracking_speed: 15.3, flick_speed: 1.0 },
-  m590: { tracking_speed: 14.5, flick_speed: 1.0 }
-};
+  default: { tracking_speed: 100.0 },
+m1887: { tracking_speed: 120.0, flick_speed: 10.0 },
+mp40:  { tracking_speed: 110.0, flick_speed: 10.0 },
+ump:   { tracking_speed: 95.0,  flick_speed: 10.0 },
+m1014: { tracking_speed: 90.0,  flick_speed: 10.0 },
+de:    { tracking_speed: 105.0, flick_speed: 10.0 },
+m590:  { tracking_speed: 100.0, flick_speed: 10.0 }
+}
 
 // === AimLockEngine Class ===
 class AimLockEngine {
@@ -243,9 +243,10 @@ class AimLockEngine {
     const offset = this.calculateHeadLockOffset(enemy, weaponType);
 
     return {
-      x: basePos.x + offset.x + (BONE_HEAD_CONFIG.offset.x || 0),
-      y: basePos.y + offset.y + (BONE_HEAD_CONFIG.offset.y || 0),
-      z: basePos.z + offset.z + (BONE_HEAD_CONFIG.offset.z || 0)
+      x: basePos.x + offset.x + (BONE_HEAD_CONFIG.offset.x ?? -0.04089227),
+y: basePos.y + offset.y + (BONE_HEAD_CONFIG.offset.y ?? 0.00907892),
+z: basePos.z + offset.z + (BONE_HEAD_CONFIG.offset.z ?? 0.02748467)
+
     };
   }
 aimHeadLock(player, enemy, weaponType, boneData = null) {
@@ -260,9 +261,9 @@ aimHeadLock(player, enemy, weaponType, boneData = null) {
 
   // Tính vị trí đích đầy đủ
   let finalTarget = new Vector3(
-    basePos.x + offset.x + (BONE_HEAD_CONFIG.offset.x || -0.04089227),
-    basePos.y + offset.y + (BONE_HEAD_CONFIG.offset.y || 0.00907892),
-    basePos.z + offset.z + (BONE_HEAD_CONFIG.offset.z || 0.02748467)
+    basePos.x + offset.x + (BONE_HEAD_CONFIG.offset.x ?? -0.04089227),
+    basePos.y + offset.y + (BONE_HEAD_CONFIG.offset.y ?? 0.00907892),
+    basePos.z + offset.z + (BONE_HEAD_CONFIG.offset.z ?? 0.02748467)
   );
 
   // ✅ Kẹp (clamp) nếu vượt quá lockRadius
@@ -282,7 +283,7 @@ aimHeadLock(player, enemy, weaponType, boneData = null) {
 }
   flickHeadshot(enemy, weaponType, boneData = null) {
     const profile = this.config.weapon_profiles[weaponType] || {};
-    const flickSpeed = profile.flick_speed || 1.0;
+    const flickSpeed = profile.flick_speed || 100.0;
 
     let baseZ = enemy.position.z + enemy.height * 0.02748467;
     if (boneData && boneData.position) {
@@ -322,7 +323,7 @@ const aimConfig = {
   headlock: {
     enabled: true,
     biasFactor: 5.0,
-    lockHeightRatio: 0.0001,
+    lockHeightRatio:  0.00907892,
     crosshairMagnetism: true,
     adaptiveRange: true,
     distanceCompensation: true,
@@ -350,7 +351,7 @@ class AimAssistEngine {
       aimSpeed: config.aimSpeed || 10.0,
       snapThreshold: config.snapThreshold || 0.001,
       predictionFactor: config.predictionFactor || 0.0001,
-      smoothingFactor: config.smoothingFactor || 0.85,
+      smoothingFactor: config.smoothingFactor || 0.1,
       ...config
     };
     this.currentTarget = null;
@@ -453,7 +454,7 @@ if (url.includes("/api/config") || url.includes("/api/aim")) {
     aimSpeed: 50.0,
     snapThreshold: 0.001,
     predictionFactor: 0.018,
-    smoothingFactor: 10.0
+    smoothingFactor: 0.1
   });
 
 const dotNotationConfig = {
@@ -529,6 +530,18 @@ const GamePackages = {
   GamePackage1: "com.dts.freefireth",
   GamePackage2: "com.dts.freefiremax"
 };
+  const boneHeadOffset = {
+  x: -0.04089227,
+  y:  0.00907892,
+  z:  0.02748467
+};
+
+const headPosition = {
+  x: basePos.x + offset.x + boneHeadOffset.x,
+  y: basePos.y + offset.y + boneHeadOffset.y,
+  z: basePos.z + offset.z + boneHeadOffset.z
+};
+
   const expandedConfig = expandKeys(dotNotationConfig);
   const finalConfig = deepMerge({}, expandedConfig);
 
