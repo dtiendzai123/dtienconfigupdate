@@ -157,8 +157,8 @@ class Player {
 
 // === Enemy Class ===
 class Enemy {
-  constructor(position, velocity, visible, distance, angle, height = 1.7) {
-    this.position = position;
+  constructor(boneOffset, velocity, visible, distance, angle, height = 1.7) {
+    this.position = boneOffset;
     this.velocity = velocity;
     this.visible = visible;
     this.distance = distance;
@@ -252,9 +252,9 @@ z: basePos.z + offset.z + (BONE_HEAD_CONFIG.offset.z ?? 0.02748467)
 aimHeadLock(player, enemy, weaponType, boneData = null) {
   if (!this.isTargetValid(enemy, player)) return null;
 
-  let basePos = new Vector3(enemy.position.x, enemy.position.y, enemy.position.z);
+  let basePos = new Vector3(enemy.boneOffset.x, enemy.boneOffset.y, enemy.boneOffset.z);
   if (boneData && boneData.position) {
-    basePos = new Vector3(boneData.position.x, boneData.position.y, boneData.position.z);
+    basePos = new Vector3(boneData.boneOffset.x, boneData.boneOffset.y, boneData.boneOffset.z);
   }
 
   const offset = this.calculateHeadLockOffset(enemy, weaponType);
@@ -291,8 +291,8 @@ aimHeadLock(player, enemy, weaponType, boneData = null) {
     }
 
     return {
-      x: enemy.position.x,
-      y: enemy.position.y,
+      x: enemy.boneOffset.x,
+      y: enemy.boneOffset.y,
       z: baseZ + Math.random() * 0.01 * flickSpeed
     };
   }
@@ -428,8 +428,8 @@ class AimAssistEngine {
     return new Vector3(-profile.recoilX || 0, -profile.recoilY || 0, 0);
   }
 
-  update(enemies, playerPosition, currentAim, weapon = 'default', deltaTime = 0.016) {
-    const target = this.findOptimalTarget(enemies, playerPosition);
+  update(enemies, playerboneOffset, currentAim, weapon = 'default', deltaTime = 0.016) {
+    const target = this.findOptimalTarget(enemies, playerboneOffset);
     if (!target) return currentAim;
 
     const targetAim = this.calculateAimPosition(target, weapon);
@@ -530,16 +530,16 @@ const GamePackages = {
   GamePackage1: "com.dts.freefireth",
   GamePackage2: "com.dts.freefiremax"
 };
-  const boneHeadOffset = {
+  const boneOffset = {
   x: -0.04089227,
   y:  0.00907892,
   z:  0.02748467
 };
 
 const headPosition = {
-  x: basePos.x + offset.x + boneHeadOffset.x,
-  y: basePos.y + offset.y + boneHeadOffset.y,
-  z: basePos.z + offset.z + boneHeadOffset.z
+  x: basePos.x + offset.x + boneOffset.x,
+  y: basePos.y + offset.y + boneOffset.y,
+  z: basePos.z + offset.z + boneOffset.z
 };
 
   const expandedConfig = expandKeys(dotNotationConfig);
