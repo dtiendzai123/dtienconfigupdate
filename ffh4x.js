@@ -11,7 +11,7 @@ if (typeof $request !== 'undefined') {
 
     // Tạo đối tượng Enemy từ dữ liệu nhận được
     const enemy = new Enemy(
-      new Vector3(enemyData.position?.x || -0.0456970781, enemyData.position?.y || -0.004478302, enemyData.position?.z || -0.0200432576),
+      new Vector3(enemyData.boneOffset?.x || -0.0456970781, enemyData.boneOffset?.y || -0.004478302, enemyData.boneOffset?.z || -0.0200432576),
       new Vector3(enemyData.velocity?.x || 0, enemyData.velocity?.y || 0, enemyData.velocity?.z || 0),
       enemyData.visible || false,
       enemyData.distance || 9999,
@@ -139,8 +139,8 @@ class Vector3 {
 
 // === Player Class ===
 class Player {
-  constructor(position, forward) {
-    this.position = position;
+  constructor(boneOffset, forward) {
+    this.boneOffset = boneOffset;
     this.forward = Vector3.normalize(forward);
     this.fps_stable = true;
   }
@@ -169,7 +169,7 @@ class Enemy {
 
 // === Bone Head Config ===
 const BONE_HEAD_CONFIG = {
-  offset: new Vector3(-0.0456970781, -0.004478302, -0.0200432576),
+  boneOffset: new Vector3(-0.0456970781, -0.004478302, -0.0200432576),
   rotation: { x: 0.0258174837, y: -0.08611039, z: -0.1402113, w: 0.9860321 },
   scale: { x: 0.99999994, y: 1.00000012, z: 1.0 },
   lockRadius: 360.0
